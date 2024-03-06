@@ -1,34 +1,44 @@
 using System;
 
 class Program {
-  Animal shark = new Animal("Shark", 0, 1);
-  public static void Main (string[] args) {
-    Console.WriteLine ();
+  static void Main () {
+    Animal shark = new Animal("Shark", 100, 1);
+    Animal kangaroo = new Animal("Kangaroo", 100, 2);
+    while (shark.HealthPoints > 0 && kangaroo.HealthPoints > 0) {
+      shark.Attack(kangaroo);
+      Console.WriteLine(kangaroo.HealthPoints);
+    }
   }
 }
 
 class Animal
 {
   public string Name;
-  public int Health;
-  public int Damage;
+  public int HealthPoints;
+  public int AttackPoints;
 
   public Animal(string name, int health, int damage)
   {
     Name = name;
-    Health = health;
-    Damage = damage;
+    HealthPoints = health;
+    AttackPoints = damage;
     
   }
-
+  // can turn into interface later
   public void TakeDamage(int damage) {
-    //fix this so it doesnt go under 0
-    Health = Health - damage;
+    HealthPoints = HealthPoints - damage;
+    if (HealthPoints < 0) {
+      HealthPoints = 0;
+    }
+  }
+  
+  // can turn into interface later
+  public void Attack(Animal other) {
+    other.TakeDamage(AttackPoints);
   }
 
-  public void Attack(Animal other) {
-    other.TakeDamage(Damage);
-  }
+  
 }
+
 
 
