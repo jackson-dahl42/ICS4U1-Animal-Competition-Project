@@ -37,7 +37,14 @@ class Animal
   
   // can turn into interface later
   public void Attack(Animal other) {
-    other.TakeDamage(AttackPoints);
+    //Ex to use environment: Will extened to kangaroo class that is impacted differently?
+    if (CurrentEnvironment.Biome == "Desert") {
+      other.TakeDamage(AttackPoints * 10);
+      }
+    else {
+      other.TakeDamage(AttackPoints);
+    }
+    
   }
 
   
