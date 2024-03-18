@@ -64,6 +64,10 @@ class ConfigureUI {
         fighter.HealthPoints = int.Parse(Console.ReadLine());
         Console.Write("Enter fighter attack points: ");
         fighter.AttackPoints = int.Parse(Console.ReadLine());
+        Console.Write("Enter fighter luck: ");
+        fighter.Luck = int.Parse(Console.ReadLine());
+        Console.Write("Enter fighter defense: ");
+        fighter.Defense = int.Parse(Console.ReadLine());
         return fighter;
     }
 
@@ -91,6 +95,8 @@ interface IFightable {
     string Name { get; set; }
     int HealthPoints { get; set; }
     int AttackPoints { get; set; }
+    int Luck { get; set; }
+    int Defense { get; set; }
 
     void Attack(IFightable target, Environment environment);
     void TakeDamage(int damage);
@@ -100,6 +106,8 @@ abstract class Animal : IFightable {
     public string Name { get; set; }
     public int HealthPoints { get; set; }
     public int AttackPoints { get; set; }
+    public int Luck { get; set; }
+    public int Defense { get; set; }
 
     public abstract void Attack(IFightable target, Environment environment);
     public abstract void TakeDamage(int damage);
@@ -107,10 +115,13 @@ abstract class Animal : IFightable {
 
 class Kangaroo : Animal {
     public override void Attack(IFightable target, Environment environment) {
-        int damage = AttackPoints;
+        Random rand = new Random();
+        int luckModifier = rand.Next(0, Luck);
+        int damage = (AttackPoints + luckModifier) - target.Defense;
         if (environment.Biome == "desert") {
-            damage = AttackPoints * 10;
+            damage = (AttackPoints + luckModifier) * 10 - target.Defense;
         }
+        if (damage < 0) damage = 0; // Ensure damage is not negative
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the kangaroo attacks {target.Name} and deals {damage} damage");
     }
@@ -125,10 +136,13 @@ class Kangaroo : Animal {
 
 class Shark : Animal {
     public override void Attack(IFightable target, Environment environment) {
-        int damage = AttackPoints;
+        Random rand = new Random();
+        int luckModifier = rand.Next(0, Luck);
+        int damage = (AttackPoints + luckModifier) - target.Defense;
         if (environment.Biome == "ocean") {
-            damage = AttackPoints * 10;
+            damage = (AttackPoints + luckModifier) * 10 - target.Defense;
         }
+        if (damage < 0) damage = 0; 
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the shark attacks {target.Name} and deals {damage} damage");
     }
@@ -143,10 +157,13 @@ class Shark : Animal {
 
 class Gorilla : Animal {
     public override void Attack(IFightable target, Environment environment) {
-        int damage = AttackPoints;
+        Random rand = new Random();
+        int luckModifier = rand.Next(0, Luck);
+        int damage = (AttackPoints + luckModifier) - target.Defense;
         if (environment.Biome == "jungle") {
-            damage = AttackPoints * 10;
+            damage = (AttackPoints + luckModifier) * 10 - target.Defense;
         }
+        if (damage < 0) damage = 0; 
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the gorilla attacks {target.Name} and deals {damage} damage");
     }
@@ -158,6 +175,7 @@ class Gorilla : Animal {
         }
     }
 }
+
 
 
 
