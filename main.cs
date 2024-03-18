@@ -3,35 +3,35 @@ using System;
 class Program {
     static void Main() {
         ConfigureUI configUI = new ConfigureUI();
-        Animal firstAnimal = configUI.ConfigureAnimal();
-        Animal secondAnimal = configUI.ConfigureAnimal();
+        IFightable firstFighter = configUI.ConfigureFighter();
+        IFightable secondFighter = configUI.ConfigureFighter();
         Environment environment = configUI.ConfigureEnvironment();
 
         Console.WriteLine("Press 'a' to attack or 'c' to reconfigure");
         while (true) {
             var key = Console.ReadKey(true).Key;
             if (key == ConsoleKey.A) {
-                while (firstAnimal.HealthPoints > 0 && secondAnimal.HealthPoints > 0) {
-                    firstAnimal.Attack(secondAnimal, environment);
-                    if (secondAnimal.HealthPoints > 0) {
-                        secondAnimal.Attack(firstAnimal, environment);
+                while (firstFighter.HealthPoints > 0 && secondFighter.HealthPoints > 0) {
+                    firstFighter.Attack(secondFighter, environment);
+                    if (secondFighter.HealthPoints > 0) {
+                        secondFighter.Attack(firstFighter, environment);
                     }
-                    Console.WriteLine($"{firstAnimal.Name} HP: {firstAnimal.HealthPoints}, {secondAnimal.Name} HP: {secondAnimal.HealthPoints}");
+                    Console.WriteLine($"{firstFighter.Name} HP: {firstFighter.HealthPoints}, {secondFighter.Name} HP: {secondFighter.HealthPoints}");
                     Console.WriteLine("Press 'a' to attack or 'c' to reconfigure");
                     if (Console.ReadKey(true).Key != ConsoleKey.A) {
                         break;
                     }
                 }
-                if (firstAnimal.HealthPoints <= 0) {
-                    Console.WriteLine($"{secondAnimal.Name} wins");
+                if (firstFighter.HealthPoints <= 0) {
+                    Console.WriteLine($"{secondFighter.Name} wins");
                 } else {
-                    Console.WriteLine($"{firstAnimal.Name} wins");
+                    Console.WriteLine($"{firstFighter.Name} wins");
                 }
             }
             if (key == ConsoleKey.C) {
                 Console.WriteLine("Reconfiguring");
-                firstAnimal = configUI.ConfigureAnimal();
-                secondAnimal = configUI.ConfigureAnimal();
+                firstFighter = configUI.ConfigureFighter();
+                secondFighter = configUI.ConfigureFighter();
                 environment = configUI.ConfigureEnvironment();
                 Console.WriteLine("Press 'a' to attack or 'c' to reconfigure");
             }
@@ -40,31 +40,31 @@ class Program {
 }
 
 class ConfigureUI {
-    public Animal ConfigureAnimal() {
-        Console.WriteLine("Configure an animal:");
-        Console.Write("Enter animal type as kangaroo, shark, or gorilla: ");
+    public IFightable ConfigureFighter() {
+        Console.WriteLine("Configure a fighter:");
+        Console.Write("Enter fighter type as kangaroo, shark, or gorilla: ");
         string type = Console.ReadLine();
-        Animal animal;
+        IFightable fighter;
         if (type == "kangaroo") {
-            animal = new Kangaroo();
+            fighter = new Kangaroo();
         }
         else if (type == "shark") {
-            animal = new Shark();
+            fighter = new Shark();
         }
-      else if (type == "gorilla") {
-            animal = new Gorilla();
+        else if (type == "gorilla") {
+            fighter = new Gorilla();
         }
         else {
-            Console.WriteLine("Invalid animal type, setting to kanagaroo");
-            animal = new Kangaroo();
+            Console.WriteLine("Invalid fighter type, setting to kangaroo");
+            fighter = new Kangaroo();
         }
-        Console.Write("Enter animal name: ");
-        animal.Name = Console.ReadLine();
-        Console.Write("Enter animal health points: ");
-        animal.HealthPoints = int.Parse(Console.ReadLine());
-        Console.Write("Enter animal attack points: ");
-        animal.AttackPoints = int.Parse(Console.ReadLine());
-        return animal;
+        Console.Write("Enter fighter name: ");
+        fighter.Name = Console.ReadLine();
+        Console.Write("Enter fighter health points: ");
+        fighter.HealthPoints = int.Parse(Console.ReadLine());
+        Console.Write("Enter fighter attack points: ");
+        fighter.AttackPoints = int.Parse(Console.ReadLine());
+        return fighter;
     }
 
     public Environment ConfigureEnvironment() {
@@ -87,20 +87,29 @@ class Environment {
     }
 }
 
-abstract class Animal {
+interface IFightable {
+    string Name { get; set; }
+    int HealthPoints { get; set; }
+    int AttackPoints { get; set; }
+
+    void Attack(IFightable target, Environment environment);
+    void TakeDamage(int damage);
+}
+
+abstract class Animal : IFightable {
     public string Name { get; set; }
     public int HealthPoints { get; set; }
     public int AttackPoints { get; set; }
 
-    public abstract void Attack(Animal target, Environment environment);
+    public abstract void Attack(IFightable target, Environment environment);
     public abstract void TakeDamage(int damage);
 }
 
 class Kangaroo : Animal {
-    public override void Attack(Animal target, Environment environment) {
+    public override void Attack(IFightable target, Environment environment) {
         int damage = AttackPoints;
         if (environment.Biome == "desert") {
-          damage = AttackPoints * 10;
+            damage = AttackPoints * 10;
         }
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the kangaroo attacks {target.Name} and deals {damage} damage");
@@ -115,10 +124,10 @@ class Kangaroo : Animal {
 }
 
 class Shark : Animal {
-    public override void Attack(Animal target, Environment environment) {
+    public override void Attack(IFightable target, Environment environment) {
         int damage = AttackPoints;
         if (environment.Biome == "ocean") {
-          damage = AttackPoints * 10;
+            damage = AttackPoints * 10;
         }
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the shark attacks {target.Name} and deals {damage} damage");
@@ -133,10 +142,10 @@ class Shark : Animal {
 }
 
 class Gorilla : Animal {
-    public override void Attack(Animal target, Environment environment) {
+    public override void Attack(IFightable target, Environment environment) {
         int damage = AttackPoints;
         if (environment.Biome == "jungle") {
-          damage = AttackPoints * 10;
+            damage = AttackPoints * 10;
         }
         target.TakeDamage(damage);
         Console.WriteLine($"{Name} the gorilla attacks {target.Name} and deals {damage} damage");
